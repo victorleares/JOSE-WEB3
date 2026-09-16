@@ -1,5 +1,4 @@
 const { DataTypes, Model } = require('sequelize');
-const bcrypt = require('bcrypt');
 const { sequelize } = require('../instances/mysql');
 
 class Usuario extends Model {}
@@ -33,7 +32,15 @@ Usuario.init(
         sequelize,
         modelName: 'Usuario',
         tableName: 'usuarios',
-        timestamps: true
+        timestamps: true,
+        defaultScope: {
+            attributes: { exclude: ['senha'] }
+        },
+        scopes: {
+            comSenha: {
+                attributes: {}
+            }
+        }
     }
 );
 

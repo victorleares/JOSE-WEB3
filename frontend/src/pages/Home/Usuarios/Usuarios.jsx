@@ -1,20 +1,38 @@
 import { useState, useEffect } from 'react';
-import { getUsuarios } from '../../../services/usuariosService';
+import { getUsuarios, addUsuario } from '../../../services/usuariosService';
 
 function Usuarios() {
     const [usuarios, setUsuarios] = useState([]);
+    const [form, setForm] = useState({ nome:'', email:'', senha:''});
+
+    const fetchUsuarios = async () => {
+        try {
+            const dados = await getUsuarios();
+            console.log(dados)
+            setUsuarios(dados.data);
+        } catch (err) {
+            console.log(err)
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSalvar = async (e) => {
+    e.preventDefault();
+
+    try {
+        await addUsuario(form);
+        setForm({ nome: '', email: '', senha: '' });
+        await fetchUsuarios();
+    } catch (err) {
+        console.log(err);
+    }
+    };
 
     useEffect(() => {
-        const fetchUsuarios = async () => {
-            try {
-                const dados = await getUsuarios();
-                console.log(dados)
-                setUsuarios(dados.data);
-            } catch (err) {
-                console.log(err)
-            }
-        };
-
         fetchUsuarios();
     }, []);
 
@@ -29,6 +47,47 @@ function Usuarios() {
                     </li>
                 ))}
             </ul>
+
+            <div className="modal-overlay">
+                <h2>Cadastrar Usário</h2>
+
+                <form onSubmit={handleSalvar}>
+                    <label>
+                        Nome:
+                        <input 
+                                type="text"
+                                name="nome"
+                                value={form.nome}
+                                onChange={handleChange}
+                                autoFocus
+                            />
+                    </label>
+                        
+                    <label>     
+                        Email:
+                        <input  
+                                type="email"
+                                name="email"
+                                value={form.email}
+                                onChange={handleChange}
+                         />
+                    </label>
+                    
+                    <label>
+                        Senha:
+                        <input 
+                                type="password"
+                                name="senha"
+                                value={form.senha}
+                                onChange={handleChange}
+                        />
+                    </label>
+
+                    <div className="modal-actions">
+                        <button type="submit">Salvar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

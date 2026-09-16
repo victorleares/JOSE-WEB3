@@ -4,4 +4,8 @@ const obterTodosUsuarios = async () => {
     return await Usuario.findAll();
 };
 
-module.exports = { obterTodosUsuarios }
+const criarUsuario = async (nome, email, senha) => {
+    return await Usuario.create({ nome, email, senha })
+}
+
+module.exports = { obterTodosUsuarios, criarUsuario }
